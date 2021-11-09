@@ -1,11 +1,23 @@
 import "./App.css";
 import logo from "./assets/images/logo.png";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function App() {
   const [currentUrl, setCurrentUrl] = useState(
     "https://www.youtube.com/embed/_5qIOrTD8GQ?list=PLYd1lOBobngDybD4FFaAEWTwkQ5YXEaS8"
   );
+
+  useEffect(() => {
+    const response = fetch(
+      "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet%2CcontentDetails&maxResults=50&playlistId=PLYd1lOBobngDybD4FFaAEWTwkQ5YXEaS8&key=AIzaSyCKvlQE5T_hGeW2GkrqQ-cDUS3aI7yf3NU"
+    );
+    const etape = response.then((response) => response.json());
+    const myJson = etape.then((json) => json.items);
+
+    myJson.then((data) =>
+      console.log(data.map((elm) => elm.snippet.resourceId.videoId))
+    );
+  });
 
   return (
     <>

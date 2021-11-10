@@ -3,7 +3,7 @@ import logo from "./assets/images/logo.png";
 import { useEffect, useState } from "react";
 
 const YOUTUBE_PLAYLIST =
-  "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet%2CcontentDetails&maxResults=50&playlistId=PLYd1lOBobngDybD4FFaAEWTwkQ5YXEaS8&key="; //TODO rajouter la nouvelle clé
+  "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet%2CcontentDetails&maxResults=50&playlistId=PLYd1lOBobngDybD4FFaAEWTwkQ5YXEaS8&key={process.env.API_KEY}"; //TODO rajouter la nouvelle clé
 
 function App() {
   const [currentUrl, setCurrentUrl] = useState(

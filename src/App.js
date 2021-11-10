@@ -2,22 +2,49 @@ import "./App.css";
 import logo from "./assets/images/logo.png";
 import { useEffect, useState } from "react";
 
+const YOUTUBE_PLAYLIST =
+  "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet%2CcontentDetails&maxResults=50&playlistId=PLYd1lOBobngDybD4FFaAEWTwkQ5YXEaS8&key="; //TODO rajouter la nouvelle clé
+
 function App() {
   const [currentUrl, setCurrentUrl] = useState(
     "https://www.youtube.com/embed/_5qIOrTD8GQ?list=PLYd1lOBobngDybD4FFaAEWTwkQ5YXEaS8"
   );
 
-  useEffect(() => {
-    const response = fetch(
-      "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet%2CcontentDetails&maxResults=50&playlistId=PLYd1lOBobngDybD4FFaAEWTwkQ5YXEaS8&key=AIzaSyCKvlQE5T_hGeW2GkrqQ-cDUS3aI7yf3NU"
-    );
-    const etape = response.then((response) => response.json());
-    const myJson = etape.then((json) => json.items);
+  const [videoIds, setVideoIds] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-    myJson.then((data) =>
-      console.log(data.map((elm) => elm.snippet.resourceId.videoId))
-    );
-  });
+  useEffect(() => {
+    const fetchPlaylist = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(YOUTUBE_PLAYLIST);
+        const json = await response.json();
+
+        if (!response.ok) {
+          throw new Error(response.error);
+        }
+        const playlist = json.items;
+        const playlistIds = playlist.map(
+          (elm) => elm.snippet.resourceId.videoId
+        );
+        setVideoIds(playlistIds);
+      } catch (error) {
+        setError(error);
+        console.warn(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPlaylist();
+  }, []);
+
+  console.log("rfresh");
+
+  if (error) {
+    return <h1>{error}</h1>;
+  }
 
   return (
     <>
@@ -34,32 +61,26 @@ function App() {
         ></iframe>
       </div>
 
-      <h2>LEs videos de la formation</h2>
+      <h2>Les videos de la formation</h2>
 
       <hr />
 
-      <div
-        onClick={() =>
-          setCurrentUrl("https://www.youtube.com/embed/q_i5jC0r48w")
-        }
-        className="test"
-      ></div>
-      <div
-        onClick={() =>
-          setCurrentUrl(
-            "https://www.youtube.com/watch?v=NE92OWzwWVo&list=PLYd1lOBobngDybD4FFaAEWTwkQ5YXEaS8&index=3"
-          )
-        }
-        className="test"
-      ></div>
-      <div
-        onClick={() =>
-          setCurrentUrl(
-            "https://www.youtube.com/watch?v=q_i5jC0r48w&list=PLYd1lOBobngDybD4FFaAEWTwkQ5YXEaS8&index=4"
-          )
-        }
-        className="test"
-      ></div>
+      {loading ? (
+        <h1>Loading...</h1>
+      ) : (
+        <div className="lol">
+          {videoIds.map((videoId) => (
+            <div
+              onClick={() => {
+                setCurrentUrl(
+                  `https://www.youtube.com/embed/${videoId}?list=PLYd1lOBobngDybD4FFaAEWTwkQ5YXEaS8`
+                );
+              }}
+              className="test"
+            />
+          ))}
+        </div>
+      )}
     </>
   );
 }

@@ -1,6 +1,7 @@
 import "./App.css";
 import logo from "./assets/images/logo.png";
 import { useEffect, useState } from "react";
+import { VideoCard } from "./components/VideoCard";
 
 const YOUTUBE_PLAYLIST =
   "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet%2CcontentDetails&maxResults=50&playlistId=PLYd1lOBobngDybD4FFaAEWTwkQ5YXEaS8&key={process.env.API_KEY}"; //TODO rajouter la nouvelle clé
@@ -29,7 +30,7 @@ function App() {
           (elm) => {
             const videoData = {
               title : elm.snippet.title,
-              thumbnail : elm.snippet.thumbnails.standard.url,
+              thumbnailUrl : elm.snippet.thumbnails.standard.url,
               thumbnailWidth :elm.snippet.thumbnails.standard.width, 
               thumbnailHeight :elm.snippet.thumbnails.standard.height, 
               idVideo : elm.snippet.resourceId.videoId
@@ -79,14 +80,7 @@ function App() {
       ) : (
         <div className="lol">
           {videoDatas.map((videoData) => (
-            <div
-              onClick={() => {
-                setCurrentUrl(
-                  `https://www.youtube.com/embed/${videoData.idVideo}?list=PLYd1lOBobngDybD4FFaAEWTwkQ5YXEaS8`
-                );
-              }}
-              className="test"
-            />
+            <VideoCard videoData={videoData} setCurrentUrl={setCurrentUrl}/>
           ))}
         </div>
       )}

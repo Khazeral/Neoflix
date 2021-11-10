@@ -10,7 +10,7 @@ function App() {
     "https://www.youtube.com/embed/_5qIOrTD8GQ?list=PLYd1lOBobngDybD4FFaAEWTwkQ5YXEaS8"
   );
 
-  const [videoIds, setVideoIds] = useState([]);
+  const [videoDatas, setVideoDatas] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -26,9 +26,18 @@ function App() {
         }
         const playlist = json.items;
         const playlistIds = playlist.map(
-          (elm) => elm.snippet.resourceId.videoId
+          (elm) => {
+            const videoData = {
+              title : elm.snippet.title,
+              thumbnail : elm.snippet.thumbnails.standard.url,
+              thumbnailWidth :elm.snippet.thumbnails.standard.width, 
+              thumbnailHeight :elm.snippet.thumbnails.standard.height, 
+              idVideo : elm.snippet.resourceId.videoId
+            };
+            setVideoDatas(videoData);
+          }
         );
-        setVideoIds(playlistIds);
+        
       } catch (error) {
         setError(error);
         console.warn(error);
@@ -69,11 +78,11 @@ function App() {
         <h1>Loading...</h1>
       ) : (
         <div className="lol">
-          {videoIds.map((videoId) => (
+          {videoDatas.map((videoData) => (
             <div
               onClick={() => {
                 setCurrentUrl(
-                  `https://www.youtube.com/embed/${videoId}?list=PLYd1lOBobngDybD4FFaAEWTwkQ5YXEaS8`
+                  `https://www.youtube.com/embed/${videoData.idVideo}?list=PLYd1lOBobngDybD4FFaAEWTwkQ5YXEaS8`
                 );
               }}
               className="test"
